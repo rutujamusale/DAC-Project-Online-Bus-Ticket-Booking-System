@@ -6,184 +6,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Bus Booking System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .dashboard-card {
-            transition: transform 0.2s;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
+        body {
+            background-color: #f8f9fa;
         }
         .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 5px 10px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card.users {
+            border-left-color: #28a745;
+        }
+        .stat-card.vendors {
+            border-left-color: #007bff;
+        }
+        .stat-card.traffic {
+            border-left-color: #ffc107;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .recent-vendors {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .vendor-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+        .vendor-item:hover {
+            background-color: #f8f9fa;
+        }
+        .vendor-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <div class="text-center text-white mb-4">
-                        <i class="fas fa-tachometer-alt fa-2x mb-2"></i>
-                        <h5>Admin Panel</h5>
+            <div class="col-md-3 col-lg-2 px-0">
+                <div class="sidebar">
+                    <div class="p-4">
+                        <h4><i class="fas fa-bus me-2"></i>Bus Admin</h4>
+                        <small>Welcome, ${sessionScope.adminUsername}</small>
                     </div>
-                    
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link text-white active" href="${pageContext.request.contextPath}/admin/dashboard">
-                                <i class="fas fa-home me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="${pageContext.request.contextPath}/admin/vendors">
-                                <i class="fas fa-building me-2"></i>
-                                Vendors
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="${pageContext.request.contextPath}/admin/add-vendor">
-                                <i class="fas fa-plus me-2"></i>
-                                Add Vendor
-                            </a>
-                        </li>
-                    </ul>
-                    
-                    <div class="position-absolute bottom-0 w-100 p-5">
-                        <a href="${pageContext.request.contextPath}/admin/logout" class="btn btn-outline-light w-100">
-                            <i class="fas fa-sign-out-alt me-2"></i>
-                            Logout
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a>
-                    </div>
+                        <a class="nav-link" href="/admin/add-vendor">
+                            <i class="fas fa-plus-circle me-2"></i>Add Vendor
+                        </a>
+                        <a class="nav-link" href="/admin/vendors">
+                            <i class="fas fa-users me-2"></i>Manage Vendors
+                        </a>
+                        <a class="nav-link" href="/admin/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </nav>
                 </div>
-            </nav>
-
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-download me-1"></i>
-                                Export
-                            </button>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Dashboard</h2>
+                        <div class="text-muted">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            <span id="currentDate"></span>
                         </div>
                     </div>
-                </div>
-
-                <!-- Dashboard Stats -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card dashboard-card text-white bg-primary">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
+                    
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card users">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h4 class="card-title">${dashboardData.totalUsers}</h4>
-                                        <p class="card-text">Total Users</p>
+                                        <div class="stat-number text-success">${dashboardData.totalUsers}</div>
+                                        <h6 class="text-muted">Total Users</h6>
                                     </div>
-                                    <div class="align-self-center">
-                                        <i class="fas fa-users fa-2x"></i>
+                                    <i class="fas fa-users fa-3x text-success opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card vendors">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="stat-number text-primary">${dashboardData.totalVendors}</div>
+                                        <h6 class="text-muted">Total Vendors</h6>
                                     </div>
+                                    <i class="fas fa-building fa-3x text-primary opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card traffic">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="stat-number text-warning">${dashboardData.dailyTraffic}</div>
+                                        <h6 class="text-muted">Daily Traffic</h6>
+                                    </div>
+                                    <i class="fas fa-chart-line fa-3x text-warning opacity-25"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-md-4">
-                        <div class="card dashboard-card text-white bg-success">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h4 class="card-title">${dashboardData.totalVendors}</h4>
-                                        <p class="card-text">Total Vendors</p>
-                                    </div>
-                                    <div class="align-self-center">
-                                        <i class="fas fa-building fa-2x"></i>
-                                    </div>
+                    
+                    <!-- Recent Vendors -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="recent-vendors">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5><i class="fas fa-clock me-2"></i>Recent Vendors</h5>
+                                    <a href="/admin/vendors" class="btn btn-outline-primary btn-sm">
+                                        View All <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="card dashboard-card text-white bg-info">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h4 class="card-title">${dashboardData.dailyTraffic}</h4>
-                                        <p class="card-text">Daily Traffic</p>
-                                    </div>
-                                    <div class="align-self-center">
-                                        <i class="fas fa-chart-line fa-2x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Recent Vendors</h5>
-                            </div>
-                            <div class="card-body">
                                 <c:choose>
-                                    <c:when test="${empty recentVendors}">
-                                        <div class="text-center py-4">
-                                            <i class="fas fa-building fa-3x text-muted mb-3"></i>
-                                            <h6>No vendors found</h6>
-                                            <p class="text-muted">Add your first vendor to get started</p>
-                                            <a href="${pageContext.request.contextPath}/admin/add-vendor" class="btn btn-primary">
-                                                <i class="fas fa-plus me-1"></i>
-                                                Add Vendor
-                                            </a>
-                                        </div>
+                                    <c:when test="${not empty recentVendors}">
+                                        <c:forEach var="vendor" items="${recentVendors}">
+                                            <div class="vendor-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">${vendor.vendorName}</h6>
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-envelope me-1"></i>${vendor.email}
+                                                        </small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-phone me-1"></i>${vendor.phoneNumber}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
                                     </c:when>
                                     <c:otherwise>
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Vendor Name</th>
-                                                        <th>Email</th>
-                                                        <th>Phone</th>
-                                                        <th>Status</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach var="vendor" items="${recentVendors}">
-                                                        <tr>
-                                                            <td>${vendor.id}</td>
-                                                            <td>${vendor.vendorName}</td>
-                                                            <td>${vendor.email}</td>
-                                                            <td>${vendor.phoneNumber}</td>
-                                                            <td>
-                                                                <span class="badge bg-success">Active</span>
-                                                            </td>
-                                                            <td>
-                                                                <a href="${pageContext.request.contextPath}/admin/vendors/${vendor.id}" 
-                                                                   class="btn btn-sm btn-outline-primary">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="text-center mt-3">
-                                            <a href="${pageContext.request.contextPath}/admin/vendors" class="btn btn-outline-primary">
-                                                View All Vendors
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted">No vendors found</p>
+                                            <a href="/admin/add-vendor" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Add First Vendor
                                             </a>
                                         </div>
                                     </c:otherwise>
@@ -192,10 +194,19 @@
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Display current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    </script>
 </body>
 </html>
