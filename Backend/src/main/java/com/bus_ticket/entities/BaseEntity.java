@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 
 @MappedSuperclass
 @Getter
@@ -24,4 +26,12 @@ public class BaseEntity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @CreatedBy
+    @Column(name = "created_by")
+    private String createdBy;
+    
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
 }

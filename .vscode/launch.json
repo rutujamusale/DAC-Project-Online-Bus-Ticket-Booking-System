@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-Application<bus-booking-system>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.bus_ticket.Application",
+      "projectName": "bus-booking-system",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
