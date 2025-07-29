@@ -191,10 +191,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button type="button" class="btn btn-outline-info btn-sm" 
-                                                                    title="View Details" onclick="viewVendor(${vendor.id})">
-                                                                <i class="fas fa-eye"></i>
-                                                            </button>
+                                                            
                                                             <button type="button" class="btn btn-outline-danger btn-sm" 
                                                                     title="Delete Vendor" onclick="deleteVendor(${vendor.id}, '${vendor.vendorName}')">
                                                                 <i class="fas fa-trash"></i>
@@ -271,10 +268,7 @@
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
         
-        // View vendor function (placeholder)
-        function viewVendor(vendorId) {
-            alert('View vendor details functionality will be implemented soon!');
-        }
+        
     </script>
 </body>
 </html>

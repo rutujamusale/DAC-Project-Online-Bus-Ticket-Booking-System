@@ -1,15 +1,16 @@
+
 package com.bus_ticket.services;
+
+import com.bus_ticket.dto.ApiResponse;
+import com.bus_ticket.dto.City.CityDto;
 
 import java.util.List;
 
-import com.bus_ticket.dto.ApiResponse;
-import com.bus_ticket.dto.City.CityResponseDTO;
-import com.bus_ticket.dto.City.NewCityDTO;
-import com.bus_ticket.entities.City;
-
 public interface CityService {
-    City createCity(NewCityDTO newCity);
-    List<CityResponseDTO> getAllCity();
-    CityResponseDTO getCityById(Long id);
+    ApiResponse addCity(CityDto cityDto);
+    List<CityDto> getAllCities();
+    List<String> getAllCityNames();
+    CityDto getCityById(Long id);
+    ApiResponse updateCity(Long id, CityDto cityDto);
     ApiResponse deleteCity(Long id);
 }

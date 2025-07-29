@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.bus_ticket.dto.AdminLoginRequest;
 import com.bus_ticket.dto.ApiResponse;
-import com.bus_ticket.dto.VendorDto;
+import com.bus_ticket.dto.Vendor.VendorDto;
 import com.bus_ticket.services.AdminService;
 import com.bus_ticket.services.VendorService;
 

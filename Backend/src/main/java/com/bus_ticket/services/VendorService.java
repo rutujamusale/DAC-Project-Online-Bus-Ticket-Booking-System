@@ -3,7 +3,7 @@ package com.bus_ticket.services;
 import java.util.List;
 
 import com.bus_ticket.dto.ApiResponse;
-import com.bus_ticket.dto.VendorDto;
+import com.bus_ticket.dto.Vendor.VendorDto;
 
 public interface VendorService {
     

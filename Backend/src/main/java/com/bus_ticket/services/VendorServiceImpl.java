@@ -2,16 +2,16 @@ package com.bus_ticket.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.bus_ticket.custom_exceptions.ApiException;
-import com.bus_ticket.custom_exceptions.ResourceNotFoundException;
 import com.bus_ticket.dao.VendorDao;
 import com.bus_ticket.dto.ApiResponse;
-import com.bus_ticket.dto.VendorDto;
+import com.bus_ticket.dto.Vendor.VendorDto;
 import com.bus_ticket.entities.Vendor;
-
+import com.bus_ticket.filter.JwtUtil;
+import com.bus_ticket.custom_exceptions.ApiException;
+import com.bus_ticket.custom_exceptions.ResourceNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +25,12 @@ public class VendorServiceImpl implements VendorService {
     @Autowired
     private ModelMapper modelMapper;
     
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
+    
     @Override
     public ApiResponse addVendor(VendorDto vendorDto) {
         // Check if vendor with email already exists
@@ -33,8 +39,8 @@ public class VendorServiceImpl implements VendorService {
         }
         
         Vendor vendor = modelMapper.map(vendorDto, Vendor.class);
-        // Store password as plain text
-        vendor.setPassword(vendorDto.getPassword());
+        // Encode password
+        vendor.setPassword(passwordEncoder.encode(vendorDto.getPassword()));
         
         vendorDao.save(vendor);
         return new ApiResponse("Vendor added successfully");
@@ -98,8 +104,8 @@ public class VendorServiceImpl implements VendorService {
             throw new ApiException("Account has been deactivated");
         }
         
-        // Simple plain text password comparison
-        if (!password.equals(vendor.getPassword())) {
+        // Check password with BCrypt
+        if (!passwordEncoder.matches(password, vendor.getPassword())) {
             throw new ApiException("Invalid credentials");
         }
         

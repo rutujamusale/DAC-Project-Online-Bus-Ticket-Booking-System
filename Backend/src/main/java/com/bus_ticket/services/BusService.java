@@ -1,17 +1,24 @@
 package com.bus_ticket.services;
 
+import com.bus_ticket.dto.ApiResponse;
+import com.bus_ticket.dto.Bus.BusDto;
+import com.bus_ticket.dto.Bus.BusSearchRequest;
+
 import java.util.List;
 
-import com.bus_ticket.dto.ApiResponse;
-import com.bus_ticket.dto.Bus.BusResponseDTO;
-import com.bus_ticket.dto.Bus.NewBusDTO;
-import com.bus_ticket.dto.Bus.UpdateBusDTO;
-import com.bus_ticket.entities.Bus;
-
 public interface BusService {
-    Bus createBus(NewBusDTO newBus);
-    List<BusResponseDTO> getAllBuses();
-    BusResponseDTO getBusById(Long id);
-    ApiResponse updateBus(Long id, UpdateBusDTO updateBus);
-    ApiResponse deleteBus(Long id);
+    
+    ApiResponse addBus(BusDto busDto);
+    
+    List<BusDto> getAllActiveBuses();
+    
+    List<BusDto> getBusesByVendor(Long vendorId);
+    
+    BusDto getBusById(Long id);
+    
+    ApiResponse updateBus(Long id, BusDto busDto);
+    
+    ApiResponse softDeleteBus(Long id);
+    
+    List<BusDto> searchBuses(BusSearchRequest searchRequest);
 }

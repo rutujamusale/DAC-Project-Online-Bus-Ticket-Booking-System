@@ -1,9 +1,7 @@
+
 package com.bus_ticket.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,13 +11,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class City extends BaseEntity{
-
-    @Column(name = "city_name")
-    private String name;
-
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+public class City extends BaseEntity {
     
+    @Column(name = "city_name", unique = true, nullable = false)
+    private String cityName;
+    
+    public City(String cityName) {
+        this.cityName = cityName;
+    }
 }

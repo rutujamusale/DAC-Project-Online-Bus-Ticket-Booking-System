@@ -1,44 +1,132 @@
+//package com.bus_ticket.controller;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.*;
+//import com.bus_ticket.dto.ApiResponse;
+//import com.bus_ticket.dto.CityDto;
+//import com.bus_ticket.services.CityService;
+//import jakarta.validation.Valid;
+//import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.tags.Tag;
+//
+//import java.util.List;
+//
+//@RestController
+//@RequestMapping("/api/cities")
+//@CrossOrigin(origins = "http://localhost:5173")
+//@Tag(name = "City Management", description = "APIs for city operations")
+//public class CityController {
+//    
+//    @Autowired
+//    private CityService cityService;
+//    
+//    @PostMapping
+//    @Operation(summary = "Add new city", description = "Add a new city to the system")
+//    public ResponseEntity<?> addCity(@Valid @RequestBody CityDto cityDto) {
+//        ApiResponse response = cityService.addCity(cityDto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
+//    
+//    @GetMapping
+//    @Operation(summary = "Get all active cities", description = "Get all active cities")
+//    public ResponseEntity<?> getAllActiveCities() {
+//        List<CityDto> cities = cityService.getAllActiveCities();
+//        return ResponseEntity.ok(cities);
+//    }
+//    
+//    @GetMapping("/names")
+//    @Operation(summary = "Get all active city names", description = "Get all active city names for dropdown")
+//    public ResponseEntity<?> getAllActiveCityNames() {
+//        List<String> cityNames = cityService.getAllActiveCityNames();
+//        return ResponseEntity.ok(cityNames);
+//    }
+//    
+//    @GetMapping("/{id}")
+//    @Operation(summary = "Get city by ID", description = "Get city details by ID")
+//    public ResponseEntity<?> getCityById(@PathVariable Long id) {
+//        CityDto city = cityService.getCityById(id);
+//        return ResponseEntity.ok(city);
+//    }
+//    
+//    @PutMapping("/{id}")
+//    @Operation(summary = "Update city", description = "Update city information")
+//    public ResponseEntity<?> updateCity(@PathVariable Long id, @Valid @RequestBody CityDto cityDto) {
+//        ApiResponse response = cityService.updateCity(id, cityDto);
+//        return ResponseEntity.ok(response);
+//    }
+//    
+//    @DeleteMapping("/{id}")
+//    @Operation(summary = "Delete city", description = "Soft delete a city")
+//    public ResponseEntity<?> deleteCity(@PathVariable Long id) {
+//        ApiResponse response = cityService.deleteCity(id);
+//        return ResponseEntity.ok(response);
+//    }
+//}
 package com.bus_ticket.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.bus_ticket.dto.City.NewCityDTO;
+import org.springframework.web.bind.annotation.*;
+import com.bus_ticket.dto.ApiResponse;
+import com.bus_ticket.dto.City.CityDto;
 import com.bus_ticket.services.CityService;
+import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+
 @RestController
-@RequestMapping("/cities")
-@AllArgsConstructor
-
+@RequestMapping("/api/cities")
+@CrossOrigin(origins = "http://localhost:5173")
+@Tag(name = "City Management", description = "APIs for city operations")
 public class CityController {
-
-    private final CityService cityService;
-
+    
+    @Autowired
+    private CityService cityService;
+    
     @PostMapping
-    public ResponseEntity<?> createCity(@RequestBody NewCityDTO cityDTO) {
-        return ResponseEntity.ok(cityService.createCity(cityDTO));
+    @Operation(summary = "Add new city", description = "Add a new city to the system")
+    public ResponseEntity<?> addCity(@Valid @RequestBody CityDto cityDto) {
+        ApiResponse response = cityService.addCity(cityDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getCity(@PathVariable Long id) {
-        return ResponseEntity.ok(cityService.getCityById(id));
-    }
-
+    
     @GetMapping
+    @Operation(summary = "Get all cities", description = "Get all cities")
     public ResponseEntity<?> getAllCities() {
-        return ResponseEntity.ok(cityService.getAllCity());
+        List<CityDto> cities = cityService.getAllCities();
+        return ResponseEntity.ok(cities);
     }
-
+    
+    @GetMapping("/names")
+    @Operation(summary = "Get all city names", description = "Get all city names for dropdown")
+    public ResponseEntity<?> getAllCityNames() {
+        List<String> cityNames = cityService.getAllCityNames();
+        return ResponseEntity.ok(cityNames);
+    }
+    
+    @GetMapping("/{id}")
+    @Operation(summary = "Get city by ID", description = "Get city details by ID")
+    public ResponseEntity<?> getCityById(@PathVariable Long id) {
+        CityDto city = cityService.getCityById(id);
+        return ResponseEntity.ok(city);
+    }
+    
+    @PutMapping("/{id}")
+    @Operation(summary = "Update city", description = "Update city information")
+    public ResponseEntity<?> updateCity(@PathVariable Long id, @Valid @RequestBody CityDto cityDto) {
+        ApiResponse response = cityService.updateCity(id, cityDto);
+        return ResponseEntity.ok(response);
+    }
+    
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete city", description = "Delete a city")
     public ResponseEntity<?> deleteCity(@PathVariable Long id) {
-        cityService.deleteCity(id);
-        return ResponseEntity.ok("City deleted (soft delete applied).");
+        ApiResponse response = cityService.deleteCity(id);
+        return ResponseEntity.ok(response);
     }
 }

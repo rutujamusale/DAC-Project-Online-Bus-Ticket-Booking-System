@@ -1,17 +1,18 @@
+
 package com.bus_ticket.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "buses")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Bus extends BaseEntity {
     
     @Column(name = "bus_number", unique = true, nullable = false)
@@ -20,21 +21,22 @@ public class Bus extends BaseEntity {
     @Column(name = "bus_name", nullable = false)
     private String busName;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn()
-    private BusType busType;
+    @Column(name = "total_seats", nullable = false)
+    private Integer totalSeats;
     
-    @Column(name = "is_deleted")
-    private boolean isDeleted = false;
+    @Column(name = "available_seats", nullable = false)
+    private Integer availableSeats;
+    
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+    
+    @Column(name = "bus_type", nullable = false)
+    private String busType;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
-
-    private Integer seatRows;
     
-    private Integer seatCols;
-    
-    // @OneToMany(mappedBy = "bus")
-    // private List<Schedule> schedules;
+    @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules;
 }

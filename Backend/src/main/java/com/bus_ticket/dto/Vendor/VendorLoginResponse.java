@@ -1,4 +1,4 @@
-package com.bus_ticket.dto;
+package com.bus_ticket.dto.Vendor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

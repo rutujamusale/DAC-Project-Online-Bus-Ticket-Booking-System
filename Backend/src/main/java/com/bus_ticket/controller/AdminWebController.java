@@ -7,7 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.bus_ticket.dto.VendorDto;
+import com.bus_ticket.dto.Vendor.VendorDto;
 import com.bus_ticket.services.AdminService;
 import com.bus_ticket.services.VendorService;
 
@@ -27,12 +27,20 @@ public class AdminWebController {
     private VendorService vendorService;
 
     @GetMapping("/")
-    public String home() {
+    public String home(HttpSession session) {
+        // Check if admin is already logged in
+        if (session.getAttribute("adminLoggedIn") != null) {
+            return "redirect:/admin/dashboard";
+        }
         return "redirect:/admin/login";
     }
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpSession session) {
+        // If already logged in, redirect to dashboard
+        if (session.getAttribute("adminLoggedIn") != null) {
+            return "redirect:/admin/dashboard";
+        }
         return "admin/login";
     }
 
@@ -43,10 +51,10 @@ public class AdminWebController {
                              RedirectAttributes redirectAttributes) {
         
         // Hardcoded admin credentials
-    	
         if ("admin".equals(username) && "1234".equals(password)) {
             session.setAttribute("adminLoggedIn", true);
             session.setAttribute("adminUsername", username);
+            session.setMaxInactiveInterval(30 * 60); // 30 minutes
             return "redirect:/admin/dashboard";
         } else {
             redirectAttributes.addFlashAttribute("error", "Invalid username or password");
@@ -61,7 +69,12 @@ public class AdminWebController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(Model model, HttpSession session) {
+        // Double check authentication
+        if (session.getAttribute("adminLoggedIn") == null) {
+            return "redirect:/admin/login";
+        }
+        
         // Get dashboard data
         Map<String, Object> dashboardData = new HashMap<>();
         dashboardData.put("totalUsers", adminService.getTotalUsers());
@@ -81,7 +94,10 @@ public class AdminWebController {
     }
 
     @GetMapping("/add-vendor")
-    public String addVendorPage(Model model) {
+    public String addVendorPage(Model model, HttpSession session) {
+        if (session.getAttribute("adminLoggedIn") == null) {
+            return "redirect:/admin/login";
+        }
         model.addAttribute("vendorDto", new VendorDto());
         return "admin/add-vendor";
     }
@@ -90,7 +106,12 @@ public class AdminWebController {
     public String addVendor(@Valid @ModelAttribute("vendorDto") VendorDto vendorDto,
                            BindingResult bindingResult,
                            RedirectAttributes redirectAttributes,
-                           Model model) {
+                           Model model,
+                           HttpSession session) {
+        
+        if (session.getAttribute("adminLoggedIn") == null) {
+            return "redirect:/admin/login";
+        }
         
         if (bindingResult.hasErrors()) {
             return "admin/add-vendor";
@@ -107,7 +128,11 @@ public class AdminWebController {
     }
 
     @GetMapping("/vendors")
-    public String vendorsPage(Model model) {
+    public String vendorsPage(Model model, HttpSession session) {
+        if (session.getAttribute("adminLoggedIn") == null) {
+            return "redirect:/admin/login";
+        }
+        
         try {
             model.addAttribute("vendors", vendorService.getAllVendors());
         } catch (Exception e) {
@@ -118,7 +143,11 @@ public class AdminWebController {
     }
 
     @PostMapping("/vendors/{id}/delete")
-    public String deleteVendor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deleteVendor(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("adminLoggedIn") == null) {
+            return "redirect:/admin/login";
+        }
+        
         try {
             vendorService.softDeleteVendor(id);
             redirectAttributes.addFlashAttribute("successMessage", "Vendor removed successfully!");
@@ -128,3 +157,4 @@ public class AdminWebController {
         return "redirect:/admin/vendors";
     }
 }
+

@@ -1,4 +1,4 @@
-package com.bus_ticket.dto;
+package com.bus_ticket.dto.Bus;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -27,22 +26,6 @@ public class BusDto {
     @Schema(description = "Bus name", example = "Express Bus")
     private String busName;
     
-    @NotBlank(message = "Source is required")
-    @Schema(description = "Source city", example = "Mumbai")
-    private String source;
-    
-    @NotBlank(message = "Destination is required")
-    @Schema(description = "Destination city", example = "Pune")
-    private String destination;
-    
-    @NotNull(message = "Departure time is required")
-    @Schema(description = "Departure time", example = "08:00")
-    private LocalTime departureTime;
-    
-    @NotNull(message = "Arrival time is required")
-    @Schema(description = "Arrival time", example = "11:30")
-    private LocalTime arrivalTime;
-    
     @NotNull(message = "Total seats is required")
     @Positive(message = "Total seats must be positive")
     @Schema(description = "Total seats", example = "40")
@@ -53,9 +36,13 @@ public class BusDto {
     @Schema(description = "Price per seat", example = "450.00")
     private BigDecimal price;
     
+    @NotBlank(message = "Bus type is required")
     @Schema(description = "Bus type", example = "AC")
     private String busType;
     
     @Schema(description = "Vendor ID", example = "1")
     private Long vendorId;
+    
+    @Schema(description = "Available seats", example = "40")
+    private Integer availableSeats;
 }
