@@ -2,6 +2,7 @@ package com.bus_ticket.entities;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,9 +29,21 @@ public class Transaction extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    List<Booking> bookings;
+    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TransactionBooking> transactionBookings;
+
+    @Column(name = "total_amount", nullable = false)
+    private Double totalAmount;
+
+    @Column(name = "payment_status", nullable = false)
+    private String paymentStatus = "PENDING"; // PENDING, COMPLETED, FAILED, CANCELLED
+
+    @Column(name = "payment_method")
+    private String paymentMethod; // CARD, UPI, NET_BANKING, WALLET
+
+    @Column(name = "transaction_reference")
+    private String transactionReference;
 
     @Column(name = "is_active")
-    private boolean isActive = false;
+    private boolean isActive = true;
 }

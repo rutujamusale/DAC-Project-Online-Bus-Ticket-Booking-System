@@ -72,7 +72,7 @@ public class AdminController {
         } catch (Exception e) {
             logger.error("Error getting pending vendors", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(false, "Error getting pending vendors: " + e.getMessage()));
+                    .body(new ApiResponse("Error getting pending vendors: " + e.getMessage(), false));
         }
     }
     

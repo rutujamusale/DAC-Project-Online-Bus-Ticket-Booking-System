@@ -1,17 +1,12 @@
+
 package com.bus_ticket.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "bookings")
@@ -19,25 +14,51 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Booking extends BaseEntity {
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "transaction_id", nullable = false)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id", nullable = false)
+    private Schedule schedule;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction_id")
     private Transaction transaction;
     
-    @NotNull(message = "Price must not be null")
-    @Positive(message = "Price must be greater than 0")
-    private Double price;
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookingSeat> bookingSeats;
     
-    @NotNull(message = "Seat column must be specified")
-    @Min(value = 1, message = "Seat column must be at least 1")
-    @Column(name = "seat_col", nullable = false)
-    private Integer seatCol;
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Passenger> passengers;
     
-    @NotNull(message = "Seat row must be specified")
-    @Min(value = 1, message = "Seat row must be at least 1")
-    @Column(name = "seat_row", nullable = false)
-    private Integer seatRow;
-
+    @Column(name = "total_amount", nullable = false)
+    private Double totalAmount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private BookingStatus status = BookingStatus.PENDING;
+    
+    @Column(name = "booking_date", nullable = false)
+    private LocalDateTime bookingDate;
+    
+    @Column(name = "payment_status")
+    private String paymentStatus = "PENDING"; // PENDING, COMPLETED, FAILED
+    
     @Column(name = "active_booking", nullable = false)
     private Boolean activeBooking = true;
+    
+    public enum BookingStatus {
+        PENDING, CONFIRMED, CANCELLED, COMPLETED, PAYMENT_PENDING, PAYMENT_FAILED
+    }
+    
+    public Booking(User user, Schedule schedule, Double totalAmount) {
+        this.user = user;
+        this.schedule = schedule;
+        this.totalAmount = totalAmount;
+        this.bookingDate = LocalDateTime.now();
+        this.activeBooking = true;
+    }
 }
+
