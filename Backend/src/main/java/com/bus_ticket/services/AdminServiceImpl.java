@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_ticket.custom_exceptions.ApiException;
-import com.bus_ticket.dao.AdminDao;
 import com.bus_ticket.dao.UserDao;
 import com.bus_ticket.dao.VendorDao;
 import com.bus_ticket.dto.AdminLoginRequest;
@@ -19,9 +18,6 @@ import java.time.LocalTime;
 public class AdminServiceImpl implements AdminService {
     
     @Autowired
-    private AdminDao adminDao;
-    
-    @Autowired
     private UserDao userDao;
     
     @Autowired
@@ -29,7 +25,6 @@ public class AdminServiceImpl implements AdminService {
     
     @Override
     public ApiResponse authenticateAdmin(AdminLoginRequest loginRequest) {
-        // Hardcoded admin credentials
         if ("admin".equals(loginRequest.getUsername()) && "1234".equals(loginRequest.getPassword())) {
             return new ApiResponse("Admin login successful");
         }
@@ -53,3 +48,4 @@ public class AdminServiceImpl implements AdminService {
         return userDao.countUsersByDateRange(startOfDay, endOfDay);
     }
 }
+

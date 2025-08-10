@@ -28,7 +28,6 @@ public class AdminWebController {
 
     @GetMapping("/")
     public String home(HttpSession session) {
-        // Check if admin is already logged in
         if (session.getAttribute("adminLoggedIn") != null) {
             return "redirect:/admin/dashboard";
         }
@@ -37,7 +36,6 @@ public class AdminWebController {
 
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
-        // If already logged in, redirect to dashboard
         if (session.getAttribute("adminLoggedIn") != null) {
             return "redirect:/admin/dashboard";
         }
@@ -50,11 +48,10 @@ public class AdminWebController {
                              HttpSession session,
                              RedirectAttributes redirectAttributes) {
         
-        // Hardcoded admin credentials
         if ("admin".equals(username) && "1234".equals(password)) {
             session.setAttribute("adminLoggedIn", true);
             session.setAttribute("adminUsername", username);
-            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+            session.setMaxInactiveInterval(30 * 60);
             return "redirect:/admin/dashboard";
         } else {
             redirectAttributes.addFlashAttribute("error", "Invalid username or password");
@@ -70,12 +67,10 @@ public class AdminWebController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
-        // Double check authentication
         if (session.getAttribute("adminLoggedIn") == null) {
             return "redirect:/admin/login";
         }
         
-        // Get dashboard data
         Map<String, Object> dashboardData = new HashMap<>();
         dashboardData.put("totalUsers", adminService.getTotalUsers());
         dashboardData.put("totalVendors", adminService.getTotalVendors());
@@ -83,7 +78,6 @@ public class AdminWebController {
         
         model.addAttribute("dashboardData", dashboardData);
         
-        // Get recent vendors (limit to 5)
         try {
             model.addAttribute("recentVendors", vendorService.getAllVendors().stream().limit(5).toList());
         } catch (Exception e) {
@@ -150,11 +144,22 @@ public class AdminWebController {
         
         try {
             vendorService.softDeleteVendor(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Vendor removed successfully!");
+            redirectAttributes.addFlashAttribute("success", "Vendor deleted successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error removing vendor: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error deleting vendor: " + e.getMessage());
         }
+        
         return "redirect:/admin/vendors";
     }
+    
+    @GetMapping("/pending-vendors")
+    public String pendingVendorsPage(Model model, HttpSession session) {
+        if (session.getAttribute("adminLoggedIn") == null) {
+            return "redirect:/admin/login";
+        }
+        
+        return "admin/pending-vendors";
+    }
 }
+
 

@@ -104,7 +104,7 @@ public class VendorWebController {
     @PostMapping("/buses/{id}/delete")
     public String deleteBus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            busService.softDeleteBus(id);
+            busService.deleteBus(id);
             redirectAttributes.addFlashAttribute("successMessage", "Bus removed successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error removing bus: " + e.getMessage());
