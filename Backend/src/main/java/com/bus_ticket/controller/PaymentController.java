@@ -1,64 +1,90 @@
 package com.bus_ticket.controller;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bus_ticket.dto.Payment.PaymentRequestDTO;
 import com.bus_ticket.dto.Payment.PaymentResponseDTO;
 import com.bus_ticket.services.PaymentService;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+
 @RestController
-@RequestMapping("/payments")
-@AllArgsConstructor
+@RequestMapping("/api/payments")
+@CrossOrigin(origins = "*")
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    @Autowired
+    private PaymentService paymentService;
 
-    // Create a new payment
-    @PostMapping
-    public ResponseEntity<?> createPayment(@RequestBody PaymentRequestDTO dto) {
-        PaymentResponseDTO createdPayment = paymentService.createPayment(dto);
-        return ResponseEntity.ok(createdPayment);
+    @PostMapping("/process")
+    public ResponseEntity<PaymentResponseDTO> processPayment(@RequestBody PaymentRequestDTO paymentRequest) {
+        try {
+            PaymentResponseDTO response = paymentService.processPayment(paymentRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    // Get a payment by ID
+    @PostMapping("/create")
+    public ResponseEntity<PaymentResponseDTO> createPayment(@RequestBody PaymentRequestDTO paymentRequest) {
+        try {
+            PaymentResponseDTO response = paymentService.createPayment(paymentRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPaymentById(@PathVariable Long id) {
-        PaymentResponseDTO payment = paymentService.getPaymentById(id);
-        return ResponseEntity.ok(payment);
+    public ResponseEntity<PaymentResponseDTO> getPaymentById(@PathVariable Long id) {
+        try {
+            PaymentResponseDTO response = paymentService.getPaymentById(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    // Get all payments (excluding soft-deleted)
-    @GetMapping
-    public ResponseEntity<?> getAllPayments() {
-        List<PaymentResponseDTO> payments = paymentService.getAllPayments();
-        return ResponseEntity.ok(payments);
+    @GetMapping("/all")
+    public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() {
+        try {
+            List<PaymentResponseDTO> payments = paymentService.getAllPayments();
+            return ResponseEntity.ok(payments);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    // Update an existing payment
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PaymentResponseDTO>> getPaymentsByUserId(@PathVariable Long userId) {
+        try {
+            List<PaymentResponseDTO> payments = paymentService.getPaymentsByUserId(userId);
+            return ResponseEntity.ok(payments);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePayment(
-            @PathVariable Long id,
-            @RequestBody PaymentRequestDTO dto) {
-        PaymentResponseDTO updatedPayment = paymentService.updatePayment(id, dto);
-        return ResponseEntity.ok(updatedPayment);
+    public ResponseEntity<PaymentResponseDTO> updatePayment(@PathVariable Long id, @RequestBody PaymentRequestDTO paymentRequest) {
+        try {
+            PaymentResponseDTO response = paymentService.updatePayment(id, paymentRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    // Soft delete a payment
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePayment(@PathVariable Long id) {
-        paymentService.deletePayment(id);
-        return ResponseEntity.ok("Payment deleted (soft delete applied).");
+    public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
+        try {
+            paymentService.deletePayment(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
