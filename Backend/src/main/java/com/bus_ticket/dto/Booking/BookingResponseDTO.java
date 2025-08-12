@@ -1,25 +1,40 @@
 package com.bus_ticket.dto.Booking;
 
-import com.bus_ticket.entities.Transaction;
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.List;
 
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingResponseDTO {
     private Long id;
-
-    private Transaction transaction;
+    private Long scheduleId;
+    private String busName;
+    private String source;
+    private String destination;
+    private String scheduleDate;
+    private String departureTime;
+    private String arrivalTime;
+    private Double totalAmount;
+    private String status;
+    private LocalDateTime bookingDate;
+    private String paymentStatus;
+    private List<BookingSeatResponseDTO> bookingSeats;
+    private List<PassengerResponseDTO> passengers;
     
-    private Double price;
-    
-    private Integer seat_col;
-    
-    private Integer seat_row;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PassengerResponseDTO {
+        private Long id;
+        private String name;
+        private Integer age;
+        private String gender;
+        private String contact;
+        private String email;
+        private String uid;
+    }
 }
