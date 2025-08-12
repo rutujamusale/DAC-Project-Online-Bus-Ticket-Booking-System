@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         // Update user details
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setPhone(userDto.getPhoneNumber());
         user.setAddress(userDto.getAddress());
         
         userDao.save(user);
