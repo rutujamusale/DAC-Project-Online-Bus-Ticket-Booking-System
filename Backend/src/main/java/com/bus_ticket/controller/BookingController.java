@@ -1,67 +1,57 @@
 package com.bus_ticket.controller;
 
+import com.bus_ticket.dto.ApiResponse;
+import com.bus_ticket.dto.Booking.BookingResponseDTO;
+import com.bus_ticket.dto.Booking.CreateBookingRequestDTO;
+import com.bus_ticket.services.BookingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.bus_ticket.dto.Booking.BookingResponseDTO;
-import com.bus_ticket.dto.Booking.NewBookingDTO;
-import com.bus_ticket.services.BookingService;
-
-import lombok.AllArgsConstructor;
-
 @RestController
-@RequestMapping("/bookings")
-@AllArgsConstructor 
+@RequestMapping("/api/bookings")
+@CrossOrigin(origins = "http://localhost:5173")
+@Tag(name = "Booking Management", description = "APIs for booking operations")
 public class BookingController {
-
+    
     @Autowired
-    private BookingService BookingService;
-
-
-    @GetMapping
-    public ResponseEntity<?> getAllBookings() {
-        List<BookingResponseDTO> Bookinges = BookingService.getAllBookings();
-        if(Bookinges.isEmpty())
-			 return ResponseEntity
-					 .status(HttpStatus.NO_CONTENT).build();
-        return ResponseEntity.ok(Bookinges);
-    }
+    private BookingService bookingService;
     
-     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookingById(@PathVariable Long id) {
-        BookingResponseDTO Booking = BookingService.getBookingById(id);
-        return ResponseEntity.ok(Booking);
-    }
-
     @PostMapping
-    public ResponseEntity<?> addBooking(@RequestBody NewBookingDTO newBooking) {
-        
-        return ResponseEntity.status(HttpStatus.CREATED)
-        .body(BookingService
-                .createBooking(newBooking));
+    @Operation(summary = "Create booking", description = "Create a new booking with passenger details")
+    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody CreateBookingRequestDTO request) {
+        BookingResponseDTO booking = bookingService.createBooking(request);
+        return ResponseEntity.ok(booking);
     }
     
-    // @PutMapping("/{id}")
-    // public ResponseEntity<?> updateBooking(@PathVariable Long id, @RequestBody UpdateBookingDTO updateBooking) {
-        
-    //     return ResponseEntity.ok(BookingService
-    //             .updateBooking(id, updateBooking));
-    // }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBooking(@PathVariable Long id){
-        return ResponseEntity.ok(BookingService
-        .deleteBooking(id));
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "Get user bookings", description = "Get all bookings for a specific user")
+    public ResponseEntity<List<BookingResponseDTO>> getUserBookings(@PathVariable Long userId) {
+        List<BookingResponseDTO> bookings = bookingService.getUserBookings(userId);
+        return ResponseEntity.ok(bookings);
     }
+    
+    @PostMapping("/{bookingId}/cancel")
+    @Operation(summary = "Cancel booking", description = "Cancel a booking and unlock seats")
+    public ResponseEntity<ApiResponse> cancelBooking(
+            @PathVariable Long bookingId,
+            @RequestParam Long userId) {
+        ApiResponse response = bookingService.cancelBooking(bookingId, userId);
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/{bookingId}/unlock")
+    @Operation(summary = "Unlock booking seats", description = "Unlock seats for a booking without cancelling")
+    public ResponseEntity<ApiResponse> unlockBookingSeats(
+            @PathVariable Long bookingId,
+            @RequestParam Long userId) {
+        ApiResponse response = bookingService.unlockBookingSeats(bookingId, userId);
+        return ResponseEntity.ok(response);
+    }
+    
+
 }
-////////////////////////////////////////////////////////////////////////////
