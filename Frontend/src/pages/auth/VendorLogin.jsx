@@ -1,11 +1,9 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { toast } from "react-toastify"
 
-const UserLogin = () => {
+const VendorLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,24 +23,35 @@ const UserLogin = () => {
     setLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:8080/api/users/login", formData)
+      const response = await axios.post("http://localhost:8080/api/vendor/login", formData)
 
-      // The backend returns token, userId, email, firstName, lastName, message
-      if (response.data.token) {
-        localStorage.setItem("userLoggedIn", "true")
-        localStorage.setItem("userToken", response.data.token)
-        localStorage.setItem("userId", response.data.userId)
-        localStorage.setItem("userEmail", response.data.email)
-        localStorage.setItem("userFirstName", response.data.firstName)
-        localStorage.setItem("userLastName", response.data.lastName)
-        toast.success(response.data.message || "Login successful!")
-        navigate("/")
+      if (response.data.vendorId) {
+        // Clear any existing user login data first
+        localStorage.removeItem("userLoggedIn")
+        localStorage.removeItem("userToken")
+        localStorage.removeItem("userId")
+        localStorage.removeItem("userEmail")
+        localStorage.removeItem("userFirstName")
+        localStorage.removeItem("userLastName")
+        
+        // Set vendor login data
+        localStorage.setItem("vendorLoggedIn", "true")
+        localStorage.setItem("vendorId", response.data.vendorId)
+        localStorage.setItem("vendorName", response.data.vendorName)
+        localStorage.setItem("vendorEmail", response.data.email)
+        localStorage.setItem("vendorToken", response.data.token)
+        toast.success("Login successful!")
+        navigate("/vendor-dashboard")
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed. Please try again.")
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleRegisterClick = () => {
+    navigate("/vendor-register")
   }
 
   return (
@@ -54,9 +63,9 @@ const UserLogin = () => {
               className="card-header text-center py-4"
               style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", borderRadius: "15px 15px 0 0" }}
             >
-              <i className="fas fa-user fa-3x text-white mb-3"></i>
-              <h3 className="text-white mb-0">User Login</h3>
-              <p className="text-white-50 mb-0">Welcome back! Please sign in to your account</p>
+              <i className="fas fa-building fa-3x text-white mb-3"></i>
+              <h3 className="text-white mb-0">Vendor Login</h3>
+              <p className="text-white-50 mb-0">Access your vendor dashboard</p>
             </div>
             <div className="card-body p-5">
               <form onSubmit={handleSubmit}>
@@ -120,13 +129,24 @@ const UserLogin = () => {
                 </button>
               </form>
 
+              {/* Register New Vendor Button */}
+              <div className="text-center mb-3">
+                <button
+                  type="button"
+                  onClick={handleRegisterClick}
+                  className="btn btn-outline-primary btn-lg w-100"
+                  style={{ borderRadius: "10px" }}
+                >
+                  <i className="fas fa-user-plus me-2"></i>
+                  Register New Vendor
+                </button>
+              </div>
+
               <div className="text-center">
-                <p className="text-muted mb-0">
-                  Don't have an account?{" "}
-                  <Link to="/user-signup" className="text-decoration-none fw-bold">
-                    Sign Up Here
-                  </Link>
-                </p>
+                <div className="alert alert-info">
+                  <i className="fas fa-info-circle me-2"></i>
+                  <strong>Note:</strong> New vendor registrations require admin approval before login access.
+                </div>
               </div>
             </div>
           </div>
@@ -136,4 +156,4 @@ const UserLogin = () => {
   )
 }
 
-export default UserLogin
+export default VendorLogin

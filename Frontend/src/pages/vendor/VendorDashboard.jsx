@@ -31,8 +31,11 @@ const VendorDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      setLoading(true)
       const vendorId = localStorage.getItem("vendorId")
       const token = localStorage.getItem("vendorToken")
+
+      console.log("Fetching dashboard data for vendor:", vendorId)
 
       const [busesResponse, schedulesResponse] = await Promise.all([
         axios.get(`http://localhost:8080/api/buses/vendor/${vendorId}`, {
@@ -43,27 +46,65 @@ const VendorDashboard = () => {
         }),
       ])
 
+      console.log("Buses response:", busesResponse.data)
+      console.log("Schedules response:", schedulesResponse.data)
+
       setBuses(busesResponse.data)
       setSchedules(schedulesResponse.data)
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
-      toast.error("Error loading dashboard data")
+      if (error.response?.status === 403) {
+        toast.error("Access denied. Please login again.")
+        navigate("/vendor-login")
+      } else if (error.response?.status === 404) {
+        toast.error("Vendor not found")
+      } else {
+        toast.error("Error loading dashboard data: " + (error.response?.data?.message || error.message))
+      }
     } finally {
       setLoading(false)
     }
   }
 
   const handleDeleteBus = async (busId) => {
-    if (window.confirm("Are you sure you want to delete this bus? This will also delete all its schedules.")) {
+    console.log("Attempting to delete bus with ID:", busId);
+    
+    if (window.confirm("Are you sure you want to permanently delete this bus? This will also permanently delete all its schedules and cannot be undone.")) {
       try {
         const token = localStorage.getItem("vendorToken")
-        await axios.delete(`http://localhost:8080/api/buses/${busId}`, {
+        const vendorId = localStorage.getItem("vendorId")
+        
+        console.log("Vendor ID:", vendorId);
+        console.log("Token exists:", !!token);
+        
+        const response = await axios.delete(`http://localhost:8080/api/buses/${busId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-        toast.success("Bus deleted successfully")
+        
+        console.log("Delete response:", response);
+        
+        if (response.data.success) {
+          toast.success(response.data.message || "Bus deleted successfully")
+        } else {
+          toast.error(response.data.message || "Error deleting bus")
+        }
+        
         fetchDashboardData()
       } catch (error) {
-        toast.error("Error deleting bus")
+        console.error("Error deleting bus:", error)
+        console.error("Error response:", error.response)
+        console.error("Error status:", error.response?.status)
+        console.error("Error data:", error.response?.data)
+        
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message)
+        } else if (error.response?.status === 404) {
+          toast.error("Bus not found")
+        } else if (error.response?.status === 403) {
+          toast.error("Access denied. Please login again.")
+        } else {
+          toast.error("Error deleting bus. Please try again.")
+        }
       }
     }
   }
@@ -141,6 +182,19 @@ const VendorDashboard = () => {
     navigate("/vendor-login")
   }
 
+  const testBackendConnection = async () => {
+    try {
+      const token = localStorage.getItem("vendorToken")
+      const response = await axios.get("http://localhost:8080/api/buses/test", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      toast.success("Backend connection successful! Response: " + response.data.message)
+    } catch (error) {
+      console.error("Backend connection test failed:", error)
+      toast.error("Backend connection failed. Error: " + (error.response?.data?.message || error.message))
+    }
+  }
+
   if (loading) {
     return (
       <div className="container py-5">
@@ -168,13 +222,24 @@ const VendorDashboard = () => {
               <p className="text-muted mb-0">Welcome back, {localStorage.getItem("vendorCompanyName") || "Vendor"}!</p>
             </div>
             <div>
-              <Link to="/add-bus" className="btn btn-primary me-2">
+              <Link to="/vendor-profile" className="btn btn-outline-primary me-2">
+                <i className="fas fa-user-edit me-2"></i>
+                Edit Profile
+              </Link>
+              <Link to="/vendor-change-password" className="btn btn-outline-warning me-2">
+                <i className="fas fa-key me-2"></i>
+                Change Password
+              </Link>
+              <Link to="/add-bus" className="btn btn-primary">
                 <i className="fas fa-plus me-2"></i>
                 Add New Bus
               </Link>
-              <button className="btn btn-outline-danger" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt me-2"></i>
-                Logout
+              <button 
+                className="btn btn-outline-info ms-2" 
+                onClick={testBackendConnection}
+              >
+                <i className="fas fa-wifi me-2"></i>
+                Test Connection
               </button>
             </div>
           </div>

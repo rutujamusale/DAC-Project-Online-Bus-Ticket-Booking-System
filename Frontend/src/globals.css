@@ -68,9 +68,113 @@ body {
   .navbar-nav {
     text-align: center;
   }
+
+  /* Mobile dropdown adjustments */
+  .dropdown-menu {
+    min-width: 180px;
+    margin-top: 0.5rem;
+  }
+
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
 }
 
 /* Ensure proper spacing */
 .container {
   max-width: 1200px;
+}
+
+/* Dropdown menu alignment fixes */
+.dropdown-menu {
+  min-width: 200px;
+  padding: 0.5rem 0;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.dropdown-item i {
+  width: 16px;
+  text-align: center;
+  margin-right: 0.5rem;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-color: #e9ecef;
+}
+
+/* Ensure consistent spacing for dropdown items */
+.dropdown-item:not(:has(i)) {
+  padding-left: 2.5rem;
+}
+
+/* Phone number input styling */
+input[type="tel"] {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+input[type="tel"]:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Validation feedback styling */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-valid {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Toast message styling */
+.Toastify__toast--error {
+  background-color: #dc3545;
+  color: white;
+}
+
+.Toastify__toast--success {
+  background-color: #198754;
+  color: white;
+}
+
+/* Vendor profile form styling */
+.vendor-profile-form .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.vendor-profile-form .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.vendor-profile-form .btn-primary:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+}
+
+.vendor-profile-form .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  transform: translateY(-1px);
 }
