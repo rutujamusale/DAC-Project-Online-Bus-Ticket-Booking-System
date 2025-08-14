@@ -174,13 +174,13 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         if (!booking.getUser().getId().equals(userId)) {
-            return new ApiResponse("You can only cancel your own bookings", false);
+            return new ApiResponse(false, "You can only cancel your own bookings");
         }
 
         // Allow cancellation of PENDING and PAYMENT_FAILED bookings
         if (booking.getStatus() != Booking.BookingStatus.PENDING && 
             booking.getStatus() != Booking.BookingStatus.PAYMENT_FAILED) {
-            return new ApiResponse("Only pending or payment failed bookings can be cancelled", false);
+            return new ApiResponse(false, "Only pending or payment failed bookings can be cancelled");
         }
 
         List<BookingSeat> bookingSeats = bookingSeatDao.findByBookingId(bookingId);
@@ -195,7 +195,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(Booking.BookingStatus.CANCELLED);
         bookingDao.save(booking);
 
-        return new ApiResponse("Booking cancelled successfully", true);
+        return new ApiResponse(true, "Booking cancelled successfully");
     }
 
     @Override
@@ -205,11 +205,11 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         if (!booking.getUser().getId().equals(userId)) {
-            return new ApiResponse("You can only unlock your own booking seats", false);
+            return new ApiResponse(false, "You can only unlock your own booking seats");
         }
 
         if (booking.getStatus() != Booking.BookingStatus.PENDING) {
-            return new ApiResponse("Only pending bookings can be unlocked", false);
+            return new ApiResponse(false, "Only pending bookings can be unlocked");
         }
 
         List<BookingSeat> bookingSeats = bookingSeatDao.findByBookingId(bookingId);
@@ -220,7 +220,7 @@ public class BookingServiceImpl implements BookingService {
             seatDao.save(seat);
         }
 
-        return new ApiResponse("Booking seats unlocked successfully", true);
+        return new ApiResponse(true, "Booking seats unlocked successfully");
     }
 
     private BookingResponseDTO convertToDTO(Booking booking) {
