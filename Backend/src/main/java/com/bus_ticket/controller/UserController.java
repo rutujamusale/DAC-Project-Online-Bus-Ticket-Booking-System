@@ -44,13 +44,10 @@ public class UserController {
     @Operation(summary = "User login", description = "Authenticate user with email and password")
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginRequest loginRequest) {
         try {
-            // Authenticate user
             ApiResponse authResponse = userService.authenticateUser(loginRequest);
             
-            // Get user details
             var user = userDao.findByEmail(loginRequest.getEmail()).get();
             
-            // Generate JWT token
             String token = jwtUtil.generateToken(user.getEmail(), "USER");
             
             UserLoginResponse response = new UserLoginResponse();
@@ -70,10 +67,86 @@ public class UserController {
         }
     }
     
-    @GetMapping("/{email}")
-    @Operation(summary = "Get user profile", description = "Get user profile by email")
-    public ResponseEntity<?> getUserProfile(@PathVariable String email) {
-        UserDto user = userService.getUserByEmail(email);
-        return ResponseEntity.ok(user);
+    @GetMapping("/id/{userId}")
+    @Operation(summary = "Get user by ID", description = "Get user profile by user ID")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            User user = userDao.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            UserDto userDto = new UserDto();
+            userDto.setId(user.getId());
+            userDto.setFirstName(user.getFirstName());
+            userDto.setLastName(user.getLastName());
+            userDto.setEmail(user.getEmail());
+            userDto.setPhone(user.getPhone());
+            userDto.setAddress(user.getAddress());
+            userDto.setCity(user.getCity());
+            userDto.setState(user.getState());
+            userDto.setPincode(user.getPincode());
+            
+            return ResponseEntity.ok(userDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+    
+    @PutMapping("/{userId}")
+    @Operation(summary = "Update user profile", description = "Update user profile information")
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestBody UserDto userDto) {
+        try {
+            User user = userDao.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            user.setFirstName(userDto.getFirstName());
+            user.setLastName(userDto.getLastName());
+            user.setEmail(userDto.getEmail());
+            user.setPhone(userDto.getPhone());
+            user.setAddress(userDto.getAddress());
+            user.setCity(userDto.getCity());
+            user.setState(userDto.getState());
+            user.setPincode(userDto.getPincode());
+            
+            User updatedUser = userDao.save(user);
+            
+            UserDto responseDto = new UserDto();
+            responseDto.setId(updatedUser.getId());
+            responseDto.setFirstName(updatedUser.getFirstName());
+            responseDto.setLastName(updatedUser.getLastName());
+            responseDto.setEmail(updatedUser.getEmail());
+            responseDto.setPhone(updatedUser.getPhone());
+            responseDto.setAddress(updatedUser.getAddress());
+            responseDto.setCity(updatedUser.getCity());
+            responseDto.setState(updatedUser.getState());
+            responseDto.setPincode(updatedUser.getPincode());
+            
+            return ResponseEntity.ok(responseDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+    
+    @PutMapping("/{userId}/deactivate")
+    @Operation(summary = "Deactivate user account", description = "Soft delete user account")
+    public ResponseEntity<?> deactivateUser(@PathVariable Long userId) {
+        try {
+            if (userId == null || userId <= 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiResponse(false, "Invalid user ID"));
+            }
+            
+            ApiResponse response = userService.deactivateUser(userId);
+            
+            if (response.isSuccess()) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Error deactivating user: " + e.getMessage()));
+        }
     }
 }
