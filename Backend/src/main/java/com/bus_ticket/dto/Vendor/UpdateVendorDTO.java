@@ -1,19 +1,18 @@
-
 package com.bus_ticket.dto.Vendor;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import com.bus_ticket.entities.Vendor.VendorStatus;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema(description = "Vendor data transfer object")
-public class VendorDto {
+@Schema(description = "Vendor update data transfer object")
+public class UpdateVendorDTO {
     
     @Schema(description = "Vendor ID", example = "1")
     private Long id;
@@ -27,10 +26,7 @@ public class VendorDto {
     @Schema(description = "Vendor email", example = "vendor@example.com")
     private String email;
     
-    @NotBlank(message = "Password is required")
-    @Schema(description = "Vendor password", example = "password123")
-    private String password;
-    
+    @Pattern(regexp = "^[6-9]\\d{9}$|^\\+91[6-9]\\d{9}$|^91[6-9]\\d{9}$", message = "Invalid Indian contact number")
     @Schema(description = "Phone number", example = "+91-9876543210")
     private String phoneNumber;
     
@@ -39,7 +35,4 @@ public class VendorDto {
     
     @Schema(description = "License number", example = "LIC123456")
     private String licenseNumber;
-    
-    @Schema(description = "Vendor status", example = "APPROVED")
-    private VendorStatus status;
 }

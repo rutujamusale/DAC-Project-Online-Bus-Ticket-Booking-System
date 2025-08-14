@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface BusDao extends JpaRepository<Bus, Long> {
     
+    @Query("SELECT b FROM Bus b WHERE b.busNumber = :busNumber")
     Optional<Bus> findByBusNumber(String busNumber);
     
     @Query("SELECT b FROM Bus b WHERE b.vendor.id = :vendorId")
