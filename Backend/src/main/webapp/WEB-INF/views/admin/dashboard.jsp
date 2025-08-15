@@ -95,6 +95,10 @@
                         <a class="nav-link" href="/admin/vendors">
                             <i class="fas fa-users me-2"></i>Manage Vendors
                         </a>
+                        <a class="nav-link" href="/admin/pending-vendors" id="pendingVendorsLink">
+                            <i class="fas fa-clock me-2"></i>Pending Requests
+                            <span class="badge bg-warning text-dark ms-2" id="pendingCount">0</span>
+                        </a>
                         <a class="nav-link" href="/admin/logout">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </a>
@@ -193,6 +197,26 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Pending Vendor Requests -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="recent-vendors">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5><i class="fas fa-clock me-2 text-warning"></i>Pending Vendor Requests</h5>
+                                    <a href="/admin/pending-vendors" class="btn btn-outline-warning btn-sm">
+                                        View All <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                                <div id="pendingVendorsList">
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-spinner fa-spin fa-2x text-muted mb-3"></i>
+                                        <p class="text-muted">Loading pending requests...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,6 +230,136 @@
             year: 'numeric',
             month: 'long',
             day: 'numeric'
+        });
+        
+        // Load pending vendors
+        function loadPendingVendors() {
+            console.log('Loading pending vendors...');
+            fetch('/api/admin/vendors/pending')
+                .then(response => {
+                    console.log('Dashboard - Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Dashboard - Pending vendors data:', data);
+                    const pendingList = document.getElementById('pendingVendorsList');
+                    const pendingCount = document.getElementById('pendingCount');
+                    
+                    if (data && data.length > 0) {
+                        pendingCount.textContent = data.length;
+                        pendingCount.style.display = 'inline';
+                        
+                        let html = '';
+                        data.slice(0, 3).forEach(vendor => {
+                            html += `
+                                <div class="vendor-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">${vendor.vendorName}</h6>
+                                            <small class="text-muted">
+                                                <i class="fas fa-envelope me-1"></i>${vendor.email}
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-phone me-1"></i>${vendor.phoneNumber}
+                                            </small>
+                                        </div>
+                                        <div class="text-end">
+                                            <button class="btn btn-success btn-sm me-1" onclick="approveVendor(${vendor.id})">
+                                                <i class="fas fa-check"></i> Approve
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" onclick="rejectVendor(${vendor.id})">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        if (data.length > 3) {
+                            html += `
+                                <div class="text-center py-2">
+                                    <small class="text-muted">And ${data.length - 3} more pending requests...</small>
+                                </div>
+                            `;
+                        }
+                        
+                        pendingList.innerHTML = html;
+                    } else {
+                        pendingCount.style.display = 'none';
+                        pendingList.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                                <p class="text-muted">No pending vendor requests</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading pending vendors:', error);
+                    document.getElementById('pendingVendorsList').innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                            <p class="text-muted">Error loading pending requests</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Approve vendor
+        function approveVendor(vendorId) {
+            if (confirm('Are you sure you want to approve this vendor?')) {
+                fetch(`/api/admin/vendors/${vendorId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Vendor approved successfully!');
+                        loadPendingVendors();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error approving vendor:', error);
+                    alert('Error approving vendor');
+                });
+            }
+        }
+        
+        // Reject vendor
+        function rejectVendor(vendorId) {
+            if (confirm('Are you sure you want to reject this vendor?')) {
+                fetch(`/api/admin/vendors/${vendorId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Vendor rejected successfully!');
+                        loadPendingVendors();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error rejecting vendor:', error);
+                    alert('Error rejecting vendor');
+                });
+            }
+        }
+        
+        // Load pending vendors when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPendingVendors();
         });
     </script>
 </body>
