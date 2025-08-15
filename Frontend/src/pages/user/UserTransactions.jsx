@@ -123,8 +123,8 @@ const UserTransactions = () => {
                             {getPaymentStatusBadge(transaction.paymentStatus)}
                           </td>
                           <td>
-                            {transaction.paymentDate ? 
-                              new Date(transaction.paymentDate).toLocaleDateString() : 
+                            {transaction.paymentDate ?
+                              new Date(transaction.paymentDate).toLocaleDateString() :
                               new Date().toLocaleDateString()
                             }
                           </td>
