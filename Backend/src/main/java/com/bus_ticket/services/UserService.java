@@ -10,9 +10,7 @@ public interface UserService {
     
     ApiResponse authenticateUser(UserLoginRequest loginRequest);
     
-    UserDto getUserByEmail(String email);
-    
     ApiResponse updateUser(Long id, UserDto userDto);
     
-    ApiResponse softDeleteUser(Long id);
+    ApiResponse deactivateUser(Long id);
 }
