@@ -13,10 +13,15 @@ import com.bus_ticket.entities.User;
 import com.bus_ticket.filter.JwtUtil;
 import com.bus_ticket.custom_exceptions.ApiException;
 import com.bus_ticket.custom_exceptions.ResourceNotFoundException;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     
     @Autowired
     private UserDao userDao;
@@ -32,52 +37,59 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public ApiResponse registerUser(UserDto userDto) {
-        // Check if user with email already exists
-        if (userDao.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new ApiException("User with email " + userDto.getEmail() + " already exists");
+        logger.info("Registering user with email: {}", userDto.getEmail());
+        
+        Optional<User> existingUser = userDao.findByEmail(userDto.getEmail());
+        
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (user.isDeleted()) {
+                logger.info("Reactivating deleted user with email: {}", userDto.getEmail());
+                user.setFirstName(userDto.getFirstName());
+                user.setLastName(userDto.getLastName());
+                user.setPhone(userDto.getPhone());
+                user.setAddress(userDto.getAddress());
+                user.setCity(userDto.getCity());
+                user.setState(userDto.getState());
+                user.setPincode(userDto.getPincode());
+                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+                user.setDeleted(false);
+                
+                userDao.save(user);
+                return new ApiResponse(true, "User account reactivated successfully");
+            } else {
+                throw new ApiException("User with email " + userDto.getEmail() + " already exists");
+            }
         }
         
         User user = modelMapper.map(userDto, User.class);
-        // Encode password
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDao.save(user);
-        return new ApiResponse("User registered successfully");
+        logger.info("User registered successfully with ID: {}", user.getId());
+        return new ApiResponse(true, "User registered successfully");
     }
     
     @Override
     public ApiResponse authenticateUser(UserLoginRequest loginRequest) {
-        User user = userDao.findByEmail(loginRequest.getEmail())
+        logger.info("Authenticating user with email: {}", loginRequest.getEmail());
+        
+        User user = userDao.findActiveByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new ApiException("Invalid credentials"));
         
-        if (user.isDeleted()) {
-            throw new ApiException("Account has been deactivated");
-        }
-        
-        // Check password with BCrypt
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new ApiException("Invalid credentials");
         }
         
-        // Generate JWT token
         String token = jwtUtil.generateToken(user.getEmail(), "USER");
         
-        return new ApiResponse("User login successful. Token: " + token);
-    }
-    
-    @Override
-    public UserDto getUserByEmail(String email) {
-        User user = userDao.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-        
-        if (user.isDeleted()) {
-            throw new ResourceNotFoundException("User account has been deactivated");
-        }
-        
-        return modelMapper.map(user, UserDto.class);
+        logger.info("User authenticated successfully: {}", user.getEmail());
+        return new ApiResponse(true, "User login successful. Token: " + token);
     }
     
     @Override
     public ApiResponse updateUser(Long id, UserDto userDto) {
+        logger.info("Updating user with ID: {}", id);
+        
         User user = userDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         
@@ -85,23 +97,44 @@ public class UserServiceImpl implements UserService {
             throw new ResourceNotFoundException("User not found with id: " + id);
         }
         
-        // Update user details
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        user.setPhone(userDto.getPhoneNumber());
+        user.setPhone(userDto.getPhone());
         user.setAddress(userDto.getAddress());
+        user.setCity(userDto.getCity());
+        user.setState(userDto.getState());
+        user.setPincode(userDto.getPincode());
         
         userDao.save(user);
-        return new ApiResponse("User updated successfully");
+        logger.info("User updated successfully: {}", id);
+        return new ApiResponse(true, "User updated successfully");
     }
     
     @Override
-    public ApiResponse softDeleteUser(Long id) {
-        User user = userDao.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    public ApiResponse deactivateUser(Long id) {
+        logger.info("Deactivating user with ID: {}", id);
         
-        user.setDeleted(true);
-        userDao.save(user);
-        return new ApiResponse("User account deactivated successfully");
+        try {
+            User user = userDao.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+            
+            if (user.isDeleted()) {
+                logger.warn("User {} is already deleted", id);
+                return new ApiResponse(false, "User account is already deactivated");
+            }
+            
+            user.setDeleted(true);
+            userDao.save(user);
+            logger.info("User deactivated successfully: {}", id);
+            
+            return new ApiResponse(true, "User account deactivated successfully");
+            
+        } catch (ResourceNotFoundException e) {
+            logger.error("User not found: {}", id, e);
+            return new ApiResponse(false, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error deactivating user: {}", id, e);
+            return new ApiResponse(false, "Error deactivating user account: " + e.getMessage());
+        }
     }
 }
