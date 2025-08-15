@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "schedules")
@@ -38,6 +39,9 @@ public class Schedule extends BaseEntity {
     
     @Column(name = "is_active")
     private boolean isActive = true;
+    
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Seat> seats;
     
     public Schedule(Bus bus, String source, String destination, LocalDate scheduleDate, 
                    LocalTime departureTime, LocalTime arrivalTime, Integer availableSeats) {

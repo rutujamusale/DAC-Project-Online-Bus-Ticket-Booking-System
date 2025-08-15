@@ -1,4 +1,3 @@
-
 package com.bus_ticket.entities;
 
 import jakarta.persistence.*;
@@ -32,6 +31,9 @@ public class Bus extends BaseEntity {
     
     @Column(name = "bus_type", nullable = false)
     private String busType;
+    
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendor_id", nullable = false)

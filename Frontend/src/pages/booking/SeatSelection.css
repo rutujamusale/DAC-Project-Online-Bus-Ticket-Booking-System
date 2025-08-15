@@ -1,0 +1,370 @@
+/* SeatSelection.css */
+
+.seats-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.seat-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.seat {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.seat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 2px;
+}
+
+.seat-number {
+  font-weight: bold;
+  margin-bottom: 2px;
+  font-size: 11px;
+}
+
+.seat-type {
+  font-size: 1.2em;
+  margin-bottom: 2px;
+}
+
+.seat-price {
+  font-size: 0.7em;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Seat Status Styles */
+.seat.available {
+  background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+  border-color: #28a745;
+  color: #155724;
+}
+
+.seat.available:hover {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+  border-color: #1e7e34;
+}
+
+.seat.selected {
+  background: linear-gradient(135deg, #cce5ff 0%, #b3d9ff 100%);
+  border-color: #007bff;
+  color: #004085;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  }
+}
+
+.seat.booked {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-color: #dc3545;
+  color: #721c24;
+  cursor: not-allowed;
+  opacity: 0.8;
+  position: relative;
+}
+
+.seat.booked::after {
+  content: "✕";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #dc3545;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.seat.reserved {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-color: #ffc107;
+  color: #856404;
+  cursor: not-allowed;
+  opacity: 0.9;
+  position: relative;
+}
+
+.seat.reserved::after {
+  content: "⏳";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Driver Area */
+.driver-area {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+  margin-bottom: 20px;
+}
+
+.driver-seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border: 2px dashed #6c757d;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.driver-seat i {
+  margin-bottom: 5px;
+}
+
+/* Legend */
+.seat-legend {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.legend-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.legend-item .seat {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+  opacity: 1;
+}
+
+.legend-item span {
+  font-size: 0.9em;
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Selection Summary */
+.selected-seat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9em;
+}
+
+.selected-seat-item:last-child {
+  border-bottom: none;
+}
+
+.total-section {
+  border-top: 2px solid #dee2e6;
+  padding-top: 15px;
+  margin-top: 15px;
+  font-size: 1.1em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .seat {
+    width: 50px;
+    height: 50px;
+    font-size: 0.7em;
+  }
+  
+  .seat-number {
+    font-size: 10px;
+  }
+  
+  .seat-type {
+    font-size: 1em;
+  }
+  
+  .seat-price {
+    font-size: 0.6em;
+  }
+  
+  .driver-seat {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .seats-container {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .seat-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .seat {
+    width: 45px;
+    height: 45px;
+    font-size: 0.65em;
+  }
+  
+  .seat-number {
+    font-size: 9px;
+  }
+  
+  .seat-type {
+    font-size: 0.9em;
+  }
+  
+  .seat-price {
+    font-size: 0.55em;
+  }
+  
+  .legend-item .seat {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .legend-item span {
+    font-size: 0.8em;
+  }
+}
+
+/* Button styles */
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+/* Fix dropdown z-index issue */
+.dropdown-menu {
+  z-index: 1050 !important;
+}
+
+/* Ensure Selection Summary doesn't overlap dropdowns */
+.sticky-top {
+  z-index: 1020;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* Loading states */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Accessibility improvements */
+.seat:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.seat.booked:focus,
+.seat.reserved:focus {
+  outline: 2px solid #6c757d;
+}
+
+/* Tooltip improvements */
+.seat[title]:hover::before {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.seat[title]:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  pointer-events: none;
+}

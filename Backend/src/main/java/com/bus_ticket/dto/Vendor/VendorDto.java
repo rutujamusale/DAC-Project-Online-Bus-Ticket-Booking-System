@@ -1,3 +1,4 @@
+
 package com.bus_ticket.dto.Vendor;
 
 import jakarta.validation.constraints.Email;
@@ -6,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.bus_ticket.entities.Vendor.VendorStatus;
 
 @Getter
 @Setter
@@ -37,4 +39,7 @@ public class VendorDto {
     
     @Schema(description = "License number", example = "LIC123456")
     private String licenseNumber;
+    
+    @Schema(description = "Vendor status", example = "APPROVED")
+    private VendorStatus status;
 }

@@ -29,6 +29,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     private ModelMapper modelMapper;
     
+    @Autowired
+    private SeatInitializationService seatInitializationService;
+    
     @Override
     public ApiResponse addSchedule(ScheduleDto scheduleDto) {
         Bus bus = busDao.findById(scheduleDto.getBusId())
@@ -55,6 +58,10 @@ public class ScheduleServiceImpl implements ScheduleService {
                                    scheduleDto.getAvailableSeats() : bus.getTotalSeats());
         
         scheduleDao.save(schedule);
+        
+        // Initialize seats for this schedule
+        seatInitializationService.initializeSeatsForSchedule(schedule);
+        
         return new ApiResponse("Schedule added successfully");
     }
     

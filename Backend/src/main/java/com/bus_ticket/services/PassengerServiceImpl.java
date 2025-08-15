@@ -37,11 +37,18 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    public List<Passenger> getPassengersByBookingId(Long bookingId) {
+        return passengerDao.findByBookingId(bookingId);
+    }
+
+    @Override
     public Passenger updatePassenger(Long id, Passenger updatedPassenger) {
         Passenger existing = getPassengerById(id);
         existing.setName(updatedPassenger.getName());
         existing.setAge(updatedPassenger.getAge());
+        existing.setGender(updatedPassenger.getGender());
         existing.setContact(updatedPassenger.getContact());
+        existing.setEmail(updatedPassenger.getEmail());
         existing.setUid(updatedPassenger.getUid());
         return passengerDao.save(existing);
     }

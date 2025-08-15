@@ -13,6 +13,9 @@ public interface ScheduleDao extends JpaRepository<Schedule, Long> {
     @Query("SELECT s FROM Schedule s WHERE s.bus.id = :busId AND s.isActive = true")
     List<Schedule> findByBusId(@Param("busId") Long busId);
     
+    @Query("SELECT s FROM Schedule s WHERE s.bus.id = :busId")
+    List<Schedule> findAllByBusId(@Param("busId") Long busId);
+    
     @Query("SELECT s FROM Schedule s WHERE s.bus.vendor.id = :vendorId AND s.isActive = true")
     List<Schedule> findByVendorId(@Param("vendorId") Long vendorId);
     

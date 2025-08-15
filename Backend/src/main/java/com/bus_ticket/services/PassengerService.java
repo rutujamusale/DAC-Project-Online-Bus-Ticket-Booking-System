@@ -8,6 +8,7 @@ public interface PassengerService {
     Passenger createPassenger(Passenger passenger);
     Passenger getPassengerById(Long id);
     List<Passenger> getAllPassengers();
+    List<Passenger> getPassengersByBookingId(Long bookingId);
     Passenger updatePassenger(Long id, Passenger updatedPassenger);
     void deletePassenger(Long id);
 }

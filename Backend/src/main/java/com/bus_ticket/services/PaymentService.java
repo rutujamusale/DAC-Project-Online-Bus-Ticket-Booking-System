@@ -9,11 +9,17 @@ public interface PaymentService {
    // Create a new payment
     PaymentResponseDTO createPayment(PaymentRequestDTO dto);
 
+    // Process payment for a booking
+    PaymentResponseDTO processPayment(PaymentRequestDTO dto);
+
     // Get a single payment by ID (only if not soft-deleted)
     PaymentResponseDTO getPaymentById(Long id);
 
     // Get all payments that are not soft-deleted
     List<PaymentResponseDTO> getAllPayments();
+
+    // Get payments by user ID
+    List<PaymentResponseDTO> getPaymentsByUserId(Long userId);
 
     // Update an existing payment
     PaymentResponseDTO updatePayment(Long id, PaymentRequestDTO dto);
