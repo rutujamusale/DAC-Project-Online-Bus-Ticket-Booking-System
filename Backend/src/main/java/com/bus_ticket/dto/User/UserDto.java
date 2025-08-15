@@ -34,8 +34,17 @@ public class UserDto {
     private String password;
     
     @Schema(description = "Phone number", example = "+91-9876543210")
-    private String phoneNumber;
+    private String phone;
     
     @Schema(description = "Address", example = "123 Main Street, Mumbai")
     private String address;
+    
+    @Schema(description = "City", example = "Mumbai")
+    private String city;
+    
+    @Schema(description = "State", example = "Maharashtra")
+    private String state;
+    
+    @Schema(description = "Pincode", example = "400001")
+    private String pincode;
 }
