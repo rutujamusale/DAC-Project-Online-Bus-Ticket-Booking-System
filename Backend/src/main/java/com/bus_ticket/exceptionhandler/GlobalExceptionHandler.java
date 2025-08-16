@@ -37,12 +37,29 @@ public class GlobalExceptionHandler {
         Map<String,String> errorMap = new HashMap<>();
         fieldErrors.forEach(fieldError -> 
             errorMap.put(fieldError.getField(), fieldError.getDefaultMessage()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        
+        // Return first validation error message in ApiResponse format
+        String firstErrorMessage = fieldErrors.isEmpty() ? "Validation failed" : fieldErrors.get(0).getDefaultMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, firstErrorMessage));
+    }
+    
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e) {
+        System.out.println("in handle illegal argument exc: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage()));
+    }
+    
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
+        System.out.println("in handle runtime exc: " + e.getMessage());
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage()));
     }
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
         System.out.println("in catch all exc " + e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage()));
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Internal server error: " + e.getMessage()));
     }
 }
