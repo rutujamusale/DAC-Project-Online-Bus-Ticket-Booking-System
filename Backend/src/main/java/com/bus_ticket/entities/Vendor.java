@@ -1,3 +1,4 @@
+
 package com.bus_ticket.entities;
 
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import java.util.List;
 @Table(name = "vendors")
 @Getter
 @Setter
-@NoArgsConstructor
+
 public class Vendor extends BaseEntity {
     
     @Column(name = "vendor_name", nullable = false)
@@ -34,6 +35,22 @@ public class Vendor extends BaseEntity {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
     
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private VendorStatus status = VendorStatus.PENDING;
+    
+    // Constructor to ensure status is set
+    public Vendor() {
+        this.status = VendorStatus.PENDING;
+    }
+    
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bus> buses;
+    
+    public enum VendorStatus {
+        PENDING,
+        APPROVED,
+        REJECTED
+    }
 }
+
