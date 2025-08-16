@@ -46,12 +46,12 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + feedbackRequestDTO.getBookingId()));
         
         // Check if feedback already exists for this booking
-        List<Feedback> existingFeedback = feedbackDao.findByBookingId(feedbackRequestDTO.getBookingId());
+        List<FeedBack> existingFeedback = feedbackDao.findByBookingId(feedbackRequestDTO.getBookingId());
         if (!existingFeedback.isEmpty()) {
             throw new IllegalStateException("Feedback already exists for booking ID: " + feedbackRequestDTO.getBookingId());
         }
         
-        Feedback feedback = new Feedback();
+        FeedBack feedback = new FeedBack();
         feedback.setUser(user);
         feedback.setBooking(booking);
         feedback.setRating(feedbackRequestDTO.getOverallRating());
@@ -66,13 +66,13 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setJourneyDate(feedbackRequestDTO.getJourneyDate());
         feedback.setActive(true);
         
-        Feedback savedFeedback = feedbackDao.save(feedback);
+        FeedBack savedFeedback = feedbackDao.save(feedback);
         return convertToResponseDTO(savedFeedback);
     }
     
     @Override
     public FeedbackResponseDTO getEnhancedFeedbackById(Long id) {
-        Feedback feedback = feedbackDao.findById(id)
+        FeedBack feedback = feedbackDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with ID: " + id));
         return convertToResponseDTO(feedback);
     }
@@ -122,7 +122,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     public FeedbackResponseDTO updateEnhancedFeedback(Long id, FeedbackRequestDTO feedbackRequestDTO) {
         validateFeedbackRequest(feedbackRequestDTO);
         
-        Feedback feedback = feedbackDao.findById(id)
+        FeedBack feedback = feedbackDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with ID: " + id));
         
         if (!feedback.isActive()) {
@@ -140,14 +140,14 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setBusName(feedbackRequestDTO.getBusName());
         feedback.setJourneyDate(feedbackRequestDTO.getJourneyDate());
         
-        Feedback updatedFeedback = feedbackDao.save(feedback);
+        FeedBack updatedFeedback = feedbackDao.save(feedback);
         return convertToResponseDTO(updatedFeedback);
     }
     
     @Override
     @Transactional
     public void deleteEnhancedFeedback(Long id) {
-        Feedback feedback = feedbackDao.findById(id)
+        FeedBack feedback = feedbackDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with ID: " + id));
         
         feedback.setActive(false);
@@ -165,7 +165,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         Booking booking = bookingDao.findById(feedbackDTO.getBookingId())
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
         
-        Feedback feedback = new Feedback();
+        FeedBack feedback = new FeedBack();
         feedback.setUser(user);
         feedback.setBooking(booking);
         feedback.setRating(feedbackDTO.getRating());
@@ -180,13 +180,13 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setJourneyDate(feedbackDTO.getJourneyDate());
         feedback.setActive(true);
         
-        Feedback savedFeedback = feedbackDao.save(feedback);
+        FeedBack savedFeedback = feedbackDao.save(feedback);
         return convertToDTO(savedFeedback);
     }
     
     @Override
     public FeedbackDTO getFeedbackById(Long id) {
-        Feedback feedback = feedbackDao.findById(id)
+        FeedBack feedback = feedbackDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found"));
         return convertToDTO(feedback);
     }
@@ -234,7 +234,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional
     public FeedbackDTO updateFeedback(Long id, FeedbackDTO feedbackDTO) {
-        Feedback feedback = feedbackDao.findById(id)
+        FeedBack feedback = feedbackDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found"));
         
         feedback.setRating(feedbackDTO.getRating());
@@ -248,14 +248,14 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setBusName(feedbackDTO.getBusName());
         feedback.setJourneyDate(feedbackDTO.getJourneyDate());
         
-        Feedback updatedFeedback = feedbackDao.save(feedback);
+        FeedBack updatedFeedback = feedbackDao.save(feedback);
         return convertToDTO(updatedFeedback);
     }
     
     @Override
     @Transactional
     public void deleteFeedback(Long id) {
-        Feedback feedback = feedbackDao.findById(id)
+        FeedBack feedback = feedbackDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found"));
         
         feedback.setActive(false);
@@ -320,7 +320,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
     
-    private FeedbackResponseDTO convertToResponseDTO(Feedback feedback) {
+    private FeedbackResponseDTO convertToResponseDTO(FeedBack feedback) {
         String userName = feedback.getUser().getFirstName() + " " + feedback.getUser().getLastName();
         Integer overallRating = feedback.getRating() != null ? feedback.getRating() : feedback.getOverallExperience();
         
@@ -343,7 +343,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         );
     }
     
-    private FeedbackDTO convertToDTO(Feedback feedback) {
+    private FeedbackDTO convertToDTO(FeedBack feedback) {
         return new FeedbackDTO(
             feedback.getId(),
             feedback.getUser().getId(),
@@ -363,7 +363,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     
     @Override
     public Map<String, Object> getFeedbackStatistics() {
-        List<Feedback> allFeedback = feedbackDao.findByIsActiveTrue();
+        List<FeedBack> allFeedback = feedbackDao.findByIsActiveTrue();
         
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalFeedback", allFeedback.size());
@@ -392,7 +392,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     
     @Override
     public Map<String, Object> getFeedbackStatisticsByBus(String busName) {
-        List<Feedback> busFeedback = feedbackDao.findByBusName(busName);
+        List<FeedBack> busFeedback = feedbackDao.findByBusName(busName);
         
         Map<String, Object> stats = new HashMap<>();
         stats.put("busName", busName);
