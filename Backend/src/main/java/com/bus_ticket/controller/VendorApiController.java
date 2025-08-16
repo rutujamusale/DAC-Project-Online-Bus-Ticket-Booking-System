@@ -18,7 +18,7 @@ import com.bus_ticket.dto.Vendor.VendorRegistrationDTO;
 
 @RestController
 @RequestMapping("/api/vendor")
-@CrossOrigin(origins = "http://52.66.205.217")
+@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Vendor Management", description = "APIs for vendor operations")
 public class VendorApiController {
     
@@ -83,7 +83,7 @@ public class VendorApiController {
         try {
             if (vendorId == null || vendorId <= 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse("Invalid vendor ID", false));
+                        .body(new ApiResponse(false, "Invalid vendor ID"));
             }
             
             ApiResponse response = vendorService.deactivateVendor(vendorId);
@@ -95,7 +95,7 @@ public class VendorApiController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Error deactivating vendor: " + e.getMessage(), false));
+                    .body(new ApiResponse(false, "Error deactivating vendor: " + e.getMessage()));
         }
     }
     
@@ -105,7 +105,7 @@ public class VendorApiController {
         try {
             if (vendorId == null || vendorId <= 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse("Invalid vendor ID", false));
+                        .body(new ApiResponse(false, "Invalid vendor ID"));
             }
             
             ApiResponse response = vendorService.updateVendorProfile(vendorId, updateVendorDTO);
@@ -117,7 +117,7 @@ public class VendorApiController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Error updating vendor profile: " + e.getMessage(), false));
+                    .body(new ApiResponse(false, "Error updating vendor profile: " + e.getMessage()));
         }
     }
     
@@ -127,7 +127,7 @@ public class VendorApiController {
         try {
             if (vendorId == null || vendorId <= 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse("Invalid vendor ID", false));
+                        .body(new ApiResponse(false, "Invalid vendor ID"));
             }
             
             ApiResponse response = vendorService.changePassword(vendorId, changePasswordDTO);
@@ -139,7 +139,7 @@ public class VendorApiController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Error changing password: " + e.getMessage(), false));
+                    .body(new ApiResponse(false, "Error changing password: " + e.getMessage()));
         }
     }
 }

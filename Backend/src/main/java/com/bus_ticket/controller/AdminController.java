@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://52.66.205.217")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
     
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
@@ -72,7 +72,7 @@ public class AdminController {
         } catch (Exception e) {
             logger.error("Error getting pending vendors", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Error getting pending vendors: " + e.getMessage(), false));
+                    .body(new ApiResponse(false, "Error getting pending vendors: " + e.getMessage()));
         }
     }
     

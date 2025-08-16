@@ -56,7 +56,7 @@ public class SeatController {
     @Operation(summary = "Unlock expired seats", description = "Unlock seats that have been reserved for more than 10 minutes")
     public ResponseEntity<ApiResponse> unlockExpiredSeats() {
         seatService.unlockExpiredSeats();
-        return ResponseEntity.ok(new ApiResponse("Expired seats unlocked successfully"));
+        return ResponseEntity.ok(new ApiResponse(true, "Expired seats unlocked successfully"));
     }
     
     @PostMapping("/test-unlock")
@@ -64,7 +64,7 @@ public class SeatController {
     public ResponseEntity<ApiResponse> testUnlockExpiredSeats() {
         System.out.println("🧪 Manual test unlock triggered at: " + java.time.LocalDateTime.now());
         seatService.unlockExpiredSeats();
-        return ResponseEntity.ok(new ApiResponse("Test unlock completed successfully"));
+        return ResponseEntity.ok(new ApiResponse(true, "Test unlock completed successfully"));
     }
     
 

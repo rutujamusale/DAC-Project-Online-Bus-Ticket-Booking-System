@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/buses")
-@CrossOrigin(origins = "http://52.66.205.217")
+@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Bus Management", description = "APIs for bus operations")
 public class BusController {
     
