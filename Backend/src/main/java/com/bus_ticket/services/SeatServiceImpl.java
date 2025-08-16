@@ -50,16 +50,16 @@ public class SeatServiceImpl implements SeatService {
         // Check if all seats are available
         for (Seat seat : seats) {
             if (!seat.getStatus().equals(Seat.SeatStatus.AVAILABLE)) {
-                return new ApiResponse("Seat " + seat.getSeatNumber() + " is not available", false);
+                return new ApiResponse(false, "Seat " + seat.getSeatNumber() + " is not available");
             }
             if (!seat.getSchedule().getId().equals(request.getScheduleId())) {
-                return new ApiResponse("Invalid seat selection", false);
+                return new ApiResponse(false, "Invalid seat selection");
             }
         }
         
         // Don't lock seats immediately - just return success
         // Seats will be locked only after user authentication and confirmation
-        return new ApiResponse("Seats selected successfully. Please login to confirm booking.", true);
+        return new ApiResponse(true, "Seats selected successfully. Please login to confirm booking.");
     }
     
     @Override
@@ -74,10 +74,10 @@ public class SeatServiceImpl implements SeatService {
             // Check if all seats are still available
             for (Seat seat : seats) {
                 if (!seat.getStatus().equals(Seat.SeatStatus.AVAILABLE)) {
-                    return new ApiResponse("Seat " + seat.getSeatNumber() + " is no longer available", false);
+                    return new ApiResponse(false, "Seat " + seat.getSeatNumber() + " is no longer available");
                 }
                 if (!seat.getSchedule().getId().equals(request.getScheduleId())) {
-                    return new ApiResponse("Invalid seat selection", false);
+                    return new ApiResponse(false, "Invalid seat selection");
                 }
             }
             
@@ -90,10 +90,10 @@ public class SeatServiceImpl implements SeatService {
             }
             
             System.out.println("Successfully locked " + seats.size() + " seats for schedule " + request.getScheduleId());
-            return new ApiResponse("Seats locked successfully", true);
+            return new ApiResponse(true, "Seats locked successfully");
         } catch (Exception e) {
             System.err.println("Error locking seats: " + e.getMessage());
-            return new ApiResponse("Error locking seats: " + e.getMessage(), false);
+            return new ApiResponse(false, "Error locking seats: " + e.getMessage());
         }
     }
     
@@ -111,7 +111,7 @@ public class SeatServiceImpl implements SeatService {
             }
         }
         
-        return new ApiResponse("Seats released successfully", true);
+        return new ApiResponse(true, "Seats released successfully");
     }
     
     @Override
@@ -188,3 +188,6 @@ public class SeatServiceImpl implements SeatService {
         );
     }
 } 
+
+
+
