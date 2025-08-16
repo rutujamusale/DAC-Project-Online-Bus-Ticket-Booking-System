@@ -114,7 +114,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Allowing requests from React dev servers
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://52.66.205.217"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
 
         // Typical REST methods
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
